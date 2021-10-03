@@ -1,0 +1,185 @@
+// this is how to import redux.
+const redux = require('redux');
+
+// each redux must have a reducer function, only one store and a subscriber.
+
+// the reducer function is a pure function takes a (state, action) params and returns the new state with its same old keys but may be with different values.
+
+// we must initialize the state with a value because in the first excution it will make an error if there is not a intial state.
+
+const counterReducer = (state = { counter: 0 }, action) => {
+  // after dispatching the actions we handle them in the way we want (remember: must return the same input)
+  if (action.type === 'increment') {
+    return {
+      counter: state.counter++,
+    };
+  }
+  if (action.type === 'decrement') {
+    return { counter: state.counter-- };
+  }
+  return { counter: state.counter };
+};
+
+// the main store we create with createStore() function passing to it the reducer to tell the store that this is the allowed reducer that will manipulate your state.
+
+const store = redux.createStore(counterReducer);
+
+// then we need a subscriber to the store to get the data for whatever we need to do.
+
+const counterSubscriber = () => {
+  // get the data from the store.
+  const latestState = store.getState();
+  // do something with it.
+  console.log(latestState);
+};
+
+// then we tell the store that this is the subscriber allowed to access the data.
+
+store.subscribe(counterSubscriber);
+
+// till now we didn't do any thing to change the state. (we need to do an action). and for this we dispatch an action.
+// the dispatch() function takes an object with some properties:
+store.dispatch({ type: 'increment' });
+store.dispatch({ type: 'decrement' });
+
+// these actions are done in the compontents files not here. here we only manage them.
+
+// after dispatching the action, we need to manage what this action will do t our state. so we go to the reducer and we do all the work.
+
+// then we export the store 
+
+export default store;
+
+=========
+
+after that we go to the main file of the app (the index.js file)
+
+1- we import the store and the provider.
+
+import { Provider } from './react-redux';
+import store from './store';
+
+2- we wrap the <App/> component with the <provider>
+
+<Provider store={store}>
+    <App />
+  </Provider>,
+
+3- to use the store in any component.
+
+  1- we go to the component.
+  2- se import the useSelector hook from react-redux
+  3- this hook takes the current state as an argument and returns a piece of it.
+
+  const counter = useSelector(state => state.counter);
+  this is t oget the value.
+
+
+= and to set the value we need to dispatch actions in the current component.
+
+1- to do this we need to set the dispatch from the usedispatch hook
+
+const dispatch = useDispatch(); // this is a function
+
+then we can use this dispatch function to dispatch the action
+
+2- dispatch the actions in some handlers 
+
+const incrementHandler = () => {
+    dispatch({ type: 'increment' });
+  };
+
+3- pass these handlers to an event
+
+<button onClick={incrementHandler}>Increment</button>
+
+===
+redux with class based component
+
+// class Counter extends Component {
+//   incrementHandler() {
+//     this.props.increment();
+//   }
+
+//   decrementHandler() {
+//     this.props.decrement();
+//   }
+
+//   toggleCounterHandler() {}
+
+//   render() {
+//     return (
+//       <main className={classes.counter}>
+//         <h1>Redux Counter</h1>
+//         <div className={classes.value}>{this.props.counter}</div>
+//         <div>
+//           <button onClick={this.incrementHandler.bind(this)}>Increment</button>
+//           <button onClick={this.decrementHandler.bind(this)}>Decrement</button>
+//         </div>
+//         <button onClick={this.toggleCounterHandler}>Toggle Counter</button>
+//       </main>
+//     );
+//   }
+// }
+
+// const mapStateToProps = state => {
+//   return {
+//     counter: state.counter
+//   };
+// }
+
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     increment: () => dispatch({ type: 'increment' }),
+//     decrement: () => dispatch({ type: 'decrement' }),
+//   }
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Counter);
+
+
+===
+redux toolkit
+
+من الواضح ان الوضع بتاع الستور كدا مش لطيف و انه هياخد مننا مجهود جبار ف التطبيقات الكبيرة عشان كدا بدل ما هنستخدم الرديوسر هنستخدم السلايس
+
+takes
+1- name of the slice
+2- intial state
+3- object of the reducers of the actions (to do things)
+
+
+const counterSlice = createSlice({
+name: 'counter',
+  intialState,
+  reducers: {
+    increment(state) {
+      state.counter++;
+    },
+    decrement(state) {
+      state.counter--;
+    },
+    increase(state, action) {
+      state.counter = state.counter + action.payload;
+      الاسم التلقائي للدخل بتاع الاكشن هو بايلود
+    },
+    toggleCounter(state) {
+      state.showCounter = !state.showCounter;
+    },
+  },
+ })
+
+the point here is that you can take the last snapshot of state and do things on it 
+also it takes the incomming action 
+
+then to make the main store here with slices we can merge some reducers together in the same store using configureStore 
+
+=> const store = configureStore({
+  reducer: { counter: counterSlice.reducer },
+});
+
+then you need to export the actions to use them as funtions in the dispatches
+
+export const counterActions = counterSlice.actions;
+
+then we go to the component and use actions and state values
