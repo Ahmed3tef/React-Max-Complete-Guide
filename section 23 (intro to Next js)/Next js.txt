@@ -1,0 +1,36 @@
+- pages is the main folder in the application.
+
+- the index.js file in it is the main file of the application. 
+  {our-domain.com}
+
+- any sub folder in pages folder considered to be a sub domain to the index.js file domain.
+  {our-domain.com/news}
+
+- the sub folders has a main index.js file in it.
+  {our-domain.com/news}
+  
+- any sub file to any index.js file in any folder considered to be a sub domain to the index.js file in this folder.
+  {our-domain.com/news/somethig-else}
+
+- to use a dinamic name for a page we use => {[somename].js} 
+to be written like that when naming it 
+  {our-domain.com/news/anything-i-am-dinamic}
+
+===
+عشان نجيب الدومين بتاع الصفحة الداينامك دي هنستخدم رياكت هووك من مكتبة نكست
+
+1- import { useRouter } from 'next/router';
+
+2- const router = useRouter();
+
+3- const newsId = router.query.newsId;
+* newsId is the name of the file we created between []
+
+===
+ to single page app we need to use <Link> components imported from next/Link. instead of <a> tags
+
+1- import Link from 'next/link';
+
+2- <Link href='/news/next-anything'></Link>; 
+ * 'using href'
+ 
