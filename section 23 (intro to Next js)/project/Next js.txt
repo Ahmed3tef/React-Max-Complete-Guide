@@ -1,0 +1,137 @@
+- pages is the main folder in the application.
+
+- the index.js file in it is the main file of the application. 
+  {our-domain.com}
+
+- any sub folder in pages folder considered to be a sub domain to the index.js file domain.
+  {our-domain.com/news}
+
+- the sub folders has a main index.js file in it.
+  {our-domain.com/news}
+  
+- any sub file to any index.js file in any folder considered to be a sub domain to the index.js file in this folder.
+  {our-domain.com/news/somethig-else}
+
+- to use a dinamic name for a page we use => {[somename].js} 
+to be written like that when naming it 
+  {our-domain.com/news/anything-i-am-dinamic}
+
+===
+عشان نجيب الدومين بتاع الصفحة الداينامك دي هنستخدم رياكت هووك من مكتبة نكست
+
+1- import { useRouter } from 'next/router';
+
+2- const router = useRouter();
+
+3- const newsId = router.query.newsId;
+* newsId is the name of the file we created between []
+
+===
+ to single page app we need to use <Link> components imported from next/Link. instead of <a> tags
+
+1- import Link from 'next/link';
+
+2- <Link href='/news/next-anything'></Link>; 
+ * 'using href'
+===
+
+to start the local host in next you type {npm run dev}
+
+===
+SO IMPORTANT:
+
+الدالة دي بنعملها اكسبورت قبل الديفولت بتاع الكومبوننت او البيدج بتاعتنا 
+
+export async function getStaticProps() {
+  // here you can fetch API
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    },
+  };
+}
+
+الدالة دي لازم يكون اسمها كدا وهي من الاسماء المحجوزة ف المكتبة 
+
+الدالة دي ممكن تكون اسينك والدالة دي من مميزاتها ان الكود بتاعها الكلاينت مبيشوفوش دي بتكون للسرفر بس وهنا بنقدر نعمل الفتش بتاع ال API  
+
+الريترن بتاعها بيكون اوبجكت ومن اهم الكيز بتاعة الاوبجكت دا هي ال props:{}
+وهي البروبس اللي الكومبوننت بتاعتنا هتاخدها اصلا يعني اللي انا همرره من هنا هيروح لنفس الكومبوننت اللي ف نفس الملف وهتاخده تتعامل بيه جوا ودا مهم ومفيد جدا 
+
+لان هنا لو جينا نستخدم يوز ايفكت عشان نفتش جواه ف اول رندر للشاشة مش هيرندر الكومبوننت بمحتوياتها اللي هتيجي من السرفر لا هو هيحجز مكانها بس وهيكون مكانها فاضي حتي لما تيجي 
+
+انما هنا ف الدالة دي هو بيعمل الفتش وبعدين بياخد الداتا نعمل بيها اللي عايزينه ونمرر البروبس زي ماحنا عايزين علي هيئة اوبجكت ودا هيتمرر للكومبوننت بتاعتنا اللي ف نفس الملف 
+
+2- function HomePage(props) {
+  return <MeetupList meetups={props.meetups} />;
+}
+
+بعد كدا هنمرر البروبس للكومبوننت
+وبعدين نستخدم اللي جواها براحتنا 
+
+===
+
+incremental static validation
+
+خاصية تانية مهمة هي revalidate 
+
+export async function getStaticProps() {
+  // here you can fetch API
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    },
+    revalidate: 10
+  };
+}
+
+الخاصية دي بتقول للسرفر يحدث المعلومات الخاصة ب الكومبوننت دي او بالبيانات دي كل 10 ثواني 
+بحيث الرقم اللي بمرره للخاصية دي هو عدد الثواني اللي بيحدث فيها المعلومات
+
+===
+الداة دي بتشتغل بردو ع السرفر بس مش ع الكلاينت سايد
+
+export async function getServerSideProps(context) {
+  const respose = context.res;
+  const request = context.req;
+
+
+  // here you can fetch API
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    },
+   
+  };
+}
+الدالة دي زي التانية بس الفرق هنا ان دي بتحدث الداتا ف السرفر مع كل تغير وبتعمل ري رندر مع كل تغير ف الداتا ودا كويس 
+ودا بستخدمه ف حاجة محتاجة مني انها تتحدث كل ثواني زي مثلا اسهم شركات او بيانات لازم تتحدث اول باول 
+
+===
+
+لو في صفحة متغيرة فيها دالة getStaticProps()
+بيكون لازم نستخدم دالة تانية اسمها getStaticPaths() 
+
+
+export async function getStaticPaths() {
+  return {
+    fallback: false, 
+
+    الخاصية دي بتقول ان الصفح اللي ال اي دي بتاعها متعرف تحت هنا هو اللي بس هيتعرض عندنا ف الموقع لكن باقي ال اي ديز مش هيتعرضوا وهيجي صفحة 404
+
+    paths: [
+      This prop takes an array of objects each one has params property it refers to an object and it has the ids of the pages allowed by the server.
+      
+      {
+        params: {
+          meetupId: 'm1',
+        },
+      },
+      {
+        params: {
+          meetupId: 'm2',
+        },
+      },
+    ],
+  };
+}
