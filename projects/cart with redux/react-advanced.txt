@@ -1,0 +1,76 @@
+لو عايزين نعمل اي ركوست من اي لينك ف احنا قدامنا حاجة من 2 مع ريدكس 
+
+1-   انك تعمله ف الكومبوننت نفهسها وتعمل الاكشنز بعد ما تخلص الايسنك بتاعك زي مثلا انك تعمل الكلام دا ف يوز ايفكت
+2- انك تعمل الكلام دا ف الاكشن كرييتورز نفسهم جوا ملف الرديوسر
+
+والافضل انك متستخدمش ابدا الرديوسر ف حاجات زي دي احنا هنعمل الكولنج ف الاكشن كرييتورز'
+
+== 
+عشان نعمل بقا الفتش هنروح ف الملف الرئيسي او ف الكومبوننت وهنستخدم يوز افكت 
+
+1- الاول هنشاور او هنجيب الحاجة اللي عايزين نبعتها او نعتمد عليها من الستيت بتاع الريدكس
+
+  const cart = useSelector(state => state.cart);
+
+2- هنعمل الفتش ف يوز ايفكت
+  useEffect(() => {
+    fetch('https://react-http-6a86d-default-rtdb.firebaseio.com/cart.json', {
+      method: 'PUT',
+      body: JSON.stringify(cart),
+    });
+  }, [cart]);
+
+  // طريقة put دي بتخليك تبعت الداتا وف نفس الوقت تعمل اوفر رايد ع القديم 
+
+======
+= using action creators { Thunk }
+
+it is a function that delays an action until later.
+
+it doesnt return the action itself but instead it returns a function that returns the action.
+
+
+export const sendCartData = cart => {
+  return async dispatch => {
+    dispatch(
+      uiActions.showNotification({
+        status: 'pending',
+        title: 'Sending...',
+        message: 'Sending cart data!',
+      })
+    );
+    const sendRequest = async () => {
+      const response = await fetch(
+        'https://react-http-6b4a6.firebaseio.com/cart.json',
+        {
+          method: 'PUT',
+          body: JSON.stringify(cart),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Sending cart data failed.');
+      }
+    };
+    try {
+      await sendRequest();
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: 'Sent cart data successfully!',
+        })
+      );
+    } catch (e) {
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Sending cart data failed!',
+        })
+      );
+    }
+  };
+};
+
+دا شكل الاكشن كرييتور عملنا جواه دالة خاصة بال api وبعدين استدعيناها جوا تراي بلوك وهكذا 
