@@ -2,6 +2,10 @@
 
 => always returns an array of two elements => the 1st element is the current state value and the 2nd element is a function of updating it.
 
+1- import it from React
+2- const [someVar, setSomeVar] = useState(some initial value);
+
+
 ===========================================================================
 
 very important:
@@ -12,16 +16,31 @@ very important:
 المفروض اننا بناخد الداتا من الاب عادي ك فنكشن او اي حاجة من دي وبنديها انبوت ع اساس انها دالة يعني والانبوت دا بيكون قيمة ف الابن 
 كالآتي
 
-<ExpensesFilter
-          onfilterChange={filterChangeHandler}
-          selected={filteredYear}
-        /> 
-دي قيمة الابن ف الاب وانا ممرر ليها فيمة ودالة 
+ف الاب انا همرر القيمة اللي انا عايز اغيرها للابن والابن هو اللي هيغيرها وبكدا اكون انا اخدت الداتا من الابن للاب 
+فيما معناه ان انا لو عايز انقل الداتا من الاب للابن بنقلها عن طريق البروبس 
+لكن لو عايز انقل الداتا من الابن للاب بنعمل 
+
+1- ستيت ف الاب عشان نخزن فيه الداتا اما تيجي من الابن 
+2- بنحط الست ستيت ف هاندلر فنكشن ف الاب 
+3- بنمرر الهاندلر فنكشن دي للابن ع انها بروبرتي 
+4- ف الابن هنعمل هاندلر فنكشن جديدة فيها الهاندلر بتاع الاب 
+5- جواها بقا احنا هنمرر الداتا اللي جبناها من الابن للهاندلر بتاع الاب اللي جوا الابن 
+   بالتالي هو كدا هيغير ف الستييت اللي انا كنت عاملها فالاب اصلا عن طريق الداتا اللي انا اخدها من الابن 
+   بكدا اكون اخدت داتا من الابن للاب
+
+in the main Expenses.js file =>
+
+  const [filteredYear, setFilteredYear] = useState('2020');
 
   const filterChangeHandler = selectedYear => {
     setFilteredYear(selectedYear);
-    console.log(selectedYear);
-};
+  };
+
+  <ExpensesFilter
+    onfilterChange={filterChangeHandler}
+    selected={filteredYear}
+  /> 
+
 
 ودا اللي بيحصل جوا الدالة اني بدي قيمة انا واخدها من برا ليوز ستيت عشان اغير القيمة اللي انا محددها ف الاب (selectedYear)
 
@@ -57,11 +76,15 @@ when you have a list of items from the data which you will render, you will use 
 ))}
 
 ================================================================
+
 to set the styles in the react component we use < style={{height: point}}>
 
-================================================================
+  خلي بالك اننا بنستخدم 2 كيرلي بريسز جوا بعض 
+
+===============================================================
 
 عشان تجيب الستيت القديمة وتضيف عليها عناصر جديدة بتعمل الاتي لكل ستيت انت عاملها باليوز ستيت
+
 1- بنعمل هاندلر نحط فيه الست ستيت عشان نستدعيها لما نعوزها 
 
 const addUsersHandler = (name,age) => {}
@@ -72,6 +95,8 @@ const addUsersHandler = (name, age) => {
   };
 
 3- بنعمل جواه البريف ستيت 
+
+  خلي بالك انه تلقائي الست ستيت بتاخد ارجومنت الستيت القديمة اصلا 
 
 const addUsersHandler = (name, age) => {
     setUsersList(prevUsersList => {
@@ -94,9 +119,12 @@ onAddUser(userName, userAge)
 useEffect بنستخدمها مع حاجة هتتحفظ ف الستوردج 
 بستخدمها مع اي حاجة ليها side effect 
 
+يعني حاجة بتتغير 
+
+
  useEffect(() => {
 
-  },[dependencies (الحاجات اللي الدالة دي هتشتغل لما الحاجات دي تتغير)])
+  },[dependencies (الدالة دي هتشتغل لما الحاجات دي تتغير)])
   لو اراي فاضية بتشتغل اول ما التطبيق بيشتغل اول مرة بس 
 
 
@@ -106,6 +134,8 @@ useEffect بنستخدمها مع حاجة هتتحفظ ف الستوردج
   }, []);
 
 هنا انا عملت برا تسجيل لحاجة معينة ف اللوكال ستوردج وبعدين بعمل اللي عايزه بيها جوا اليوز افكت
+وانا مستخدمش ديبندنسيز لان انا عايزه يشتغل ف اول التطبيق بس 
+
 
   useEffect(() => {
     setFormIsValid(
@@ -115,13 +145,29 @@ useEffect بنستخدمها مع حاجة هتتحفظ ف الستوردج
 هنا عملناها مع حاجة تانية متغيرة ولكن بتتعمل كل ما حاجة من المتغيرات بتتغير 
 
 
-================================================================================
+==============================================================================
+
 في عيب ف اللي احنا عملناه انه مع كل تغير ف اي حرف هيبعت ركوست للسرفر ودا هيبطأ ويعطل الدنيا 
 
 ف حنا هنستخدم طريقة الكلين اب عشان ننضف الحوار دا 
 ودا عن طريق الريترن اللي ممكن نستخدمها ف اليوز افكت واللي هي بترجع دالة
 
 الدالة دي المفروض انها اول مرة مبتتعملش الا بعد اما الكود اللي ف يوز افكت الي قبلها يتعمل لكن كل المرات اللي بعد اول مرة هي اللي بتتعمل الاول 
+
+المفروض انك بتعمل ست تايمر بحيث انه يتارجت لومفيش تغير حصل لمدة ثانية مثلا ف احنا نعتمد القيمة اللي جتلنا دي 
+عشان مش كل شوية يبعت ابديت للداتا ع كل حرف هيتبعت
+
+  useEffect(() => {
+    const identifier = setTimeout( () => {
+    setFormIsValid(
+      enteredPassword.trim().length > 6 && enteredEmail.includes('@')
+    )}, 800)
+
+  return () => {clearTimeout(identifier)}
+   دالة الريترن دي دالة كلين مش هيتعمل عليها اكسكيوت الا بعد اول 
+   side effect يحصل 
+  
+  }, [enteredPassword, enteredEmail]);
 
 == conclusion for dependencies
 
@@ -131,10 +177,49 @@ if dependencies = [] => useEffect excuted once.
 
 if dependencies = [value] => useEffect excuted when this value changes. 
 
-=========
-useReducer()
+====================================
+
+useReducer() 
 
 بنستخدمها مع الاوامر امعقدة اكتر من يوز ايفكت لانها بتقدر تتجكم ف اكتر من ستيت ف نفس الوقت 
+
+بنستخدمها عشان نتحكم ف اكتر من ستيت لاكتر من عنصر 
+
+
+it returns the current state and the dispatch function. 
+
+const [state, dispatchFn] = useReducer(ReducerFunction, previousState)
+
+ReducerFunction 
+دي هي اللي هنتحكم فيها ف كل الحاجات اللي داخلة للستيت بتاعنا وايه نقبله وايه لا عن طريق الاكشنز اللي هنعملها ف الدسباتش فنكشن
+
+والدالة دي بنعملها برا الكومبوننت بتاعتنا عادي 
+
+فرضا ان احنا عايزين نغير ف الاستيت بتاعتنا وعايزين ندخل قيمة معينة تتحفظ فيها ودا هيكون جوا دالة بتغير ف الاستيت عندنا 
+
+
+const emailChangeHandler = (event) => {
+    dispatchEmail({type: 'USER_INPUT', value: event.target.value})
+}
+
+اول حاجة بنعملها اننا بنعمل دسباتش للاكشن اللي احنا عايزين نعمله .. 
+الاكشن اللي احنا بنمرره للدسباتش دا احنا اللي بنعمله وبنتحكم ف كل حاجة رايحة 
+احنا هنا اديناله نوع وقيمة 
+النوع هو اللي هتأكد منه وهعمله شرط عشان اقدر امرر القيمة للستيت
+
+- بعد كدا هنروح للرديوسر فنشكن وهي دي اللي هنعمل فيها كل حاجة لان هي اللي بتاخد الستيت القديمة وهي اللي بتاخد 
+الاكشن اللي احنا مررناه ف الدسباتش فنكشن ودي اللي بترجعلنا الاستيت الجديدة 
+
+const emailReducer = (state, action) => {
+  هنا الشرط بتاعي ان الاكشن نوعه يكون يوزر انبوت ولو هو صح هياخد القيمة اللي جوا للاكشن و يحطها ف الاستيت عندنا 
+  if (action.type === 'USER_INPUT') {
+    return { value: action.value, isValid: action.value.includes('@') };
+  }
+  لو لا برجع الاستيت البيزك اللي ملهاش قيم جديدة
+  return { value: '', isValid: false };
+
+  الريترن من الرديوسر بيرترن للاستيت 
+};
 
 =========
 
@@ -142,12 +227,18 @@ context api
 
 this is like the store of data of the application.
 
+
+
 1- بنعمل ملف باسم الكونكست و بنحفظ فيه الحاجة بانها react.createContext()
+بنعمل انشيال ستيت للكونتكست 
+
 
 وجواها بنمرر اوبجكت بالداتا اللي عايزينها تتخزن فيه 
+
 const AuthContext = React.createContext({
   isLoggedIn: false,
 });
+
 دا بيرجعلي كومبوننت
 
 بعدين بتعمله اكسبورت
@@ -162,7 +253,8 @@ export default AuthContext;
 
 بنستخدم طريقة من 2 يا اما بالكونتكست كونسيومر يا اما بالرياكت هووك
 
-1- عشان تخلي كومبوننت تستخدم الداات اللي جاية دي او تسمعلها بمعني اصح ف احنا هنحط محتويات الكومبوننت دي جوا كونتكست كونسيومر كالاتي 
+1- عشان تخلي كومبوننت تستخدم الداات اللي جاية دي او تسمعلها بمعني اصح
+ ف احنا هنحط محتويات الكومبوننت دي جوا كونتكست كونسيومر كالاتي 
 
 <AuthContext.Consumer>
 
@@ -194,7 +286,8 @@ export default AuthContext;
 </AuthContext.Consumer>
 
 
-لازم يكون جواه دالة بترجع الحاجات اللي انت كنت كاتبها اصلا ف الكومبوننت قبل ما تستخدم الكونتكست والارجومنت اللي داخلها هو عبارة عن الداتا اللي ف الكونتكست علي صورة الاوبجكت اللي احنا عملناه
+لازم يكون جواه دالة بترجع الحاجات اللي انت كنت كاتبها اصلا ف الكومبوننت 
+قبل ما تستخدم الكونتكست والارجومنت اللي داخلها هو عبارة عن الداتا اللي ف الكونتكست علي صورة الاوبجكت اللي احنا عملناه
 
 
 
@@ -202,7 +295,8 @@ export default AuthContext;
 
 const context = useContext(AuthContext);
 
-بنستخدم يوز كونتكست ونمرر ليها الكونتكست بتاعنا  اللي هو الستور اصلا وبعدين الراجع منها بنحفظه ف متغير وبيكون دا هو الداتا بتاعتنا
+بنستخدم يوز كونتكست ونمرر ليها الكونتكست بتاعنا  اللي هو الستور اصلا 
+وبعدين الراجع منها بنحفظه ف متغير وبيكون دا هو الداتا بتاعتنا
 
 ==
 
@@ -218,11 +312,23 @@ const context = useContext(AuthContext);
 
 const ctx = useContext(ContextName)
 
+(شوف الكونتكست اللي فستور ال food order app)
+
+1- عملنا انشيال ستيت للكونتكست وشكله وتقسيمة العناصر فيه وهي مفهاش قيم ف ملف ال 
+   cart-context.js
+
+2- عملنا ملف تاني جنبه ف فولدر الستور ودا عملنا فيه الرديوسر وكل حاجة خاصة بيه وعملنا ف النهاية البروفايدر بتاع الكونتكست
+   وهنمرر الداتا منهم للكونتكست الرئيسي بتاعنا ودا ف ملف 
+   CartProvider.js
+
+3- هتروح تراب ال app.js بالبروفايدر دا 
+
+4- جوا اي عنصر من عناصر الابلكيشن دلوقتي تقدر تجيب داتا من الاكونتكست او تمرر ليه داتا ع اساس الفنكشنلتي اللي 
+   انت عاملها ف ملف البروفايدر 
+   ومثال علي الكلام دا ف ملف 
+   Cart.js 
+
 ===============================================================
-
-
-
-
 
 ==> class based component == 
 
@@ -302,6 +408,38 @@ in class based component you can connect to only one context.
 ===============
 
 http requests
+
+بما ان الفتش دا حاجة متغيرة ف احنا هنعملها ف اليوز ايفكت
+
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, []);
+
+  const fetchMoviesHandler = async () => {
+    setIsLoading(true); // start the spinner
+    try {
+      const response = await fetch('https://swapi.dev/api/films/');
+      if (!response.ok) {
+        throw new Error('Fetching movies failed !');
+      }
+
+      const data = await response.json();
+
+      const moviesData = data.results.map(movie => {
+        return {
+          id: movie.episode_id,
+          title: movie.title,
+          openingText: movie.opening_crawl,
+          releaseDate: movie.release_date,
+        };
+      });
+      setMovies(moviesData);
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false); // close spinner
+  };
+
 ===============
 
 Redux 
@@ -314,13 +452,19 @@ to use redux with react:
 2- we make a store folder in the src folder.
 
 3- in it we make a index.js file, we will spicify the redux logic in it.
-=> 1) import { createStore } from 'redux';
-   2) make the reducer function
-   - بياخد الستيت القديمة و الاكشن اللي هنعمله 
-   - كل اكشن بيكون ليه نوع معين وهو دا الشرط اللي علي اساسه هنغير ف الستيت
-   - دايما احنا لازم يكون عندنا شروط عشان نغير ف الداتا اللي ف الستور ودي هنعدلها ف الرديوسر لكن ابدا ابدا مش هنعدل الداتا بطريقة مباشرة ف الستور نفسه
 
-   const counterReducer = (state = { counter: 0 }, action) => {
+=> 1) import { createStore } from 'redux';
+
+   2) make the {{ reducer }} function
+
+   - بياخد الستيت القديمة و الاكشن اللي هنعمله 
+
+   - كل اكشن بيكون ليه نوع معين وهو دا الشرط اللي علي اساسه هنغير ف الستيت
+
+   - دايما احنا لازم يكون عندنا شروط عشان نغير ف الداتا اللي ف الستور 
+     ودي هنعدلها ف الرديوسر لكن ابدا ابدا مش هنعدل الداتا بطريقة مباشرة ف الستور نفسه
+
+const counterReducer = (state = { counter: 0 }, action) => {
   if (action.type === 'increment') {
     return { counter: state.counter + 1 };
   }
@@ -328,6 +472,7 @@ to use redux with react:
     return { counter: state.counter - 1 };
   }
   return state;
+  لازم لازم يرجع عندي ستيت
 };
 
   3) make the store by passing the reducer to it
@@ -344,7 +489,10 @@ to use redux with react:
       document.getElementById('root')
     );
 
+لو نفتكر ان ف الرديوسر مع الكونتكست كنا بنعمل دا معه ال app.js مش مع الاندكس
+بنراب كل الالمنتس اللي جوا ال app.js مش ال app.js نفسه
 ======
+
 to get data from the store to a component:
 
 1- in the component we import { useSelector } from 'react-redux';
@@ -355,6 +503,7 @@ by just this we get the piece of data we need from the store. (state.counter)
 and if any thing changes in this data it will affect the component.
 
 ======
+
 dispatch actions (useDispatch hook) 
 
 1- we need to import useDispatch hook from 'react-redux'
@@ -375,12 +524,16 @@ dispatch actions (useDispatch hook)
 5- then use it in the component:
     <button onClick={decrementHandler}>Decrement</button>
 
+اليوز دسباتش و اليوز سلكتور هما تلقائي مسستمين نفسهم ع انهم يبعتوا ع الستور اللي عندي وييجيبه منه 
+دا طلاما انا محدد الستور ف البروفايدر ف الاندكس فايل بتاع البروجكت بتاعي 
+
 ======
 
 we must always return a mutated values of the state in the store like we did.
 never mutated the state itself directly.
 
 ======
+
 redux toolkit
 
 بدل ما نستخدم الرديوسر عشان نعمل الستور في حاجة احسن بكتير  هي اليوز سلايس
@@ -408,11 +561,13 @@ createSlice({
 
 الرديوسرز بتاخد الستيت و الاكشن ك انبوت ليها 
 من المميزات المهمة هنا ان انا ممكن اعمل العمليات بطريقة مباشرة علي الستيت 
-والحاجة التانية المهمة اني لو عايز اعدل علي جزء معين ف الستيت بعدل عليه هو بس من غير ما اكتب الستيت كلها واعدل علي جزء فيها 
+والحاجة التانية المهمة اني لو عايز اعدل علي جزء معين ف الستيت بعدل عليه 
+هو بس من غير ما اكتب الستيت كلها واعدل علي جزء فيها 
 
 طب ليه الكلام دا ؟
 
-الريدكس تولكت بتخليني بدل ما اعدل علي الستيت بشكل مباشر هي ف الخلفية بتعمل نسخة من الستيت و الحاجة اللي انا معدل عليها بتعملها اوفرايد و الباقي بتنقله زي ماهو بدون تعديل 
+الريدكس تولكت بتخليني بدل ما اعدل علي الستيت بشكل مباشر هي ف الخلفية بتعمل نسخة من الستيت 
+والحاجة اللي انا معدل عليها بتعملها اوفرايد و الباقي بتنقله زي ماهو بدون تعديل 
 والحاجة دي اسمها immer
 
 ==-==
@@ -434,25 +589,29 @@ const store = configureStore({ reducer: { counter: counterSlice.reducer, and ano
 how to dispatch action with slices
 
 1- export const counterActions = counterSlice.actions; 
-from the reducer's file
+from the reducer's file (slice) 
 
 2- go to the component file where the actions are dispatched.
 
-3- import counterActions from '../store'
+3- import counterActions from '../store/counter'
 
 4- const incrementHandler = () => {
     dispatch(counterActions.increment());
+
     خلي خلي بالك احنا هنا بنشغل الفنكشن مش بنشاور عليها 
     لاننا عايزين القيمة اللي راجعة منها وهي الاكشن اللي جواها 
     هي هترجع اوبجكت عبارة عن اكشن جواه التايب بتاعه اللي التولكت هتعملهولي 
   };
   const increaseHandler = () => {
     dispatch(counterActions.increase(10))
-  حاجة كمان مهمة هي اني اقدر امرر اي داتا للاكشن دا ولو انا ممررها مباشر زي ماحنا عاملين فوق كدا ف هي هتتحفظ ف بروبرتي اسمها payload: 10
+
+   حاجة كمان مهمة هي اني اقدر امرر اي داتا للاكشن دا ولو انا ممررها مباشر
+   زي ماحنا عاملين فوق كدا ف هي هتتحفظ ف بروبرتي اسمها payload: 10
   
   }
 
 ============
+
 Advanced Redux
 ==-==-==-==
 send http requests
@@ -460,7 +619,8 @@ send http requests
 1- مينفعش ابدا تعمل اي side effect ف الرديوسر 
 2- عشان نعمل اي ركوست ههنعمله اما ف الكومبوننت نفسها او ف اكشن كرييتور احنا هنعمله
 3- اي انتقال للداتا جوا الابلكيشن بتاعنا هنعمله ف الرديوسر 
-4- الركوست هنعمله جوا يوز افكت بردو علي حسب ايه الحاجة اللي هبعتها للباك اند .. بنعملها ف اي كمبوننت سواء رئيسية او فرعية عادي
+4- الركوست هنعمله جوا يوز افكت بردو علي حسب ايه الحاجة اللي هبعتها للباك اند.. 
+بنعملها ف اي كمبوننت سواء رئيسية او فرعية عادي
 
 ===
 لو عايزين نعمل اي ركوست من اي لينك ف احنا قدامنا حاجة من 2 مع ريدكس 
@@ -492,13 +652,59 @@ send http requests
 
 it is a function that delays an action until later.
 
-it doesnt return the action itself but instead it returns a function that returns the action.
+it doesn't return the action itself but instead it returns a function that returns the action.
 
 
 1- ممكن نعمل الاكشن كرييتور ف السلايس عادي ودا الامبلمنتيشن 
 لكن الاستدعاء بتاعها هيكون ف ال main App.js
 
+هو ف الكورس عمله ف ملف لواحده اسمه cart-actions.js
+
 = in cart-slice or you can make it in a separate file:
+
+دا عشان نجيب الداتا من السرفر
+
+export const fetchCartData = () => {
+  return async dispatch => { 
+    السطر دا هو اساس الموضوع هو بيرترن دالة انا عامل جواها دسباتش 
+    ف لما انا بعمل ليها استدعاء جوا ال app.js 
+    هي بترجع ليا الاكشن اللي انا عملته هنا وبيسمع هناك
+
+    const fetchData = async () => {
+      const response = await fetch(
+        'https://react-http-6a86d-default-rtdb.firebaseio.com/cart.json'
+      );
+
+      if (!response.ok) {
+        throw new Error('Could not fetch cart data!');
+      }
+
+      const data = await response.json();
+
+      return data;
+    };
+
+    try {
+      const cartData = await fetchData();
+      dispatch(
+        cartActions.replaceCart({ الكارت اكشنز دي انا عاملها امبورت من الكونتكست مش من هنا
+          items: cartData.items || [],
+          totalQuantity: cartData.totalQuantity,
+        })
+      );
+    } catch (error) {
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Fetching cart data failed!',
+        })
+      );
+    }
+  };
+};
+
+
 دا عشان نبعت داتا الكارت
 
 export const sendCartData = cart => {
@@ -545,43 +751,6 @@ export const sendCartData = cart => {
 };
 
 
-ودا عشان نجيب الداتا من السرفر 
-
-export const fetchCartData = () => {
-  return async dispatch => {
-    const fetchData = async () => {
-      const response = await fetch(
-        'https://react-http-6a86d-default-rtdb.firebaseio.com/cart.json'
-      );
-
-      if (!response.ok) {
-        throw new Error('Could not fetch cart data!');
-      }
-
-      const data = await response.json();
-
-      return data;
-    };
-
-    try {
-      const cartData = await fetchData();
-      dispatch(
-        cartActions.replaceCart({
-          items: cartData.items || [],
-          totalQuantity: cartData.totalQuantity,
-        })
-      );
-    } catch (error) {
-      dispatch(
-        uiActions.showNotification({
-          status: 'error',
-          title: 'Error!',
-          message: 'Fetching cart data failed!',
-        })
-      );
-    }
-  };
-};
 
 دا شكل الاكشن كرييتور عملنا جواه دالة خاصة بال api وبعدين استدعيناها جوا تراي بلوك وهكذا 
 
@@ -590,6 +759,9 @@ export const fetchCartData = () => {
   useEffect(() => {
     dispatch(fetchCartData());
   }, [dispatch]);
+
+  المفروض ان الاول انا كنت بمرر اوبجكت هو عبارة عن الاكشن وفيه النوع وداتا لو في داتا 
+  لكن هنا انا بستدعي دالة والراجع منها هو الاكشن 
 
   useEffect(() => {
     if (isInitial) {
@@ -605,6 +777,7 @@ export const fetchCartData = () => {
 الدسباتش بتاخد امبلمنت لدالة عشان كدا عملنا ثانك بيرجع دالة اما بنعمله استدعاء عشان لو احتاجنا داتا خارجية
 
 ===============
+
 {{{ SPA }}}
 
 1- to use react router in your application you need to install it 
@@ -613,7 +786,8 @@ export const fetchCartData = () => {
 2- you need to  import { Route } from 'react-router-dom';
 it allows you to define some path and a certain component to be rendered when this path becomes active in the url.
 
-3- بعد كدا بتروح الملف الرئيسي بتاعك وبتحط فيه الراوت وجواه الصفحة اللي انت عايزها تظهر لما يكون في باث معين موجود والباث دا احنا بنحطه ف خاصية للراوت اسمها باث 
+3- بعد كدا بتروح الملف الرئيسي بتاعك وبتحط فيه الراوت 
+وجواه الصفحة اللي انت عايزها تظهر لما يكون في باث معين موجود والباث دا احنا بنحطه ف خاصية للراوت اسمها باث 
 
 <Route path='/welcome'> <Welcome/> </Route>
 
@@ -622,7 +796,7 @@ it allows you to define some path and a certain component to be rendered when th
 
 pages like welcome, products and other pages should be separated in another folder called pages.
 
-4- then you go to the index file and import this
+4- then you go to the index.js file and import this
 
 import { BrowserRouter } from 'react-router-dom';
 
@@ -636,15 +810,19 @@ ReactDOM.render(
 );
 
 
-6- بالنسبة للنكات اللي هتحولنا ع الصفحات التانية مش هنستخدمها بأنكور تاج لكن هنعملها بكومبوننت تانية من رياكت راوتر دوم وهي <link>
+6- بالنسبة للنكات اللي هتحولنا ع الصفحات التانية مش هنستخدمها 
+بأنكور تاج لكن هنعملها بكومبوننت تانية من رياكت راوتر دوم وهي <link>
 
-= بعد كدا بنستخدم الخاصية to بدل href عشان نحول المستخدم ع الصفحة التانية اللي هو عايزها بس من غير ما نعمل ركوست تاني للسرفر ونحمل صفحة تانية 
+= بعد كدا بنستخدم الخاصية to بدل href عشان نحول المستخدم ع الصفحة التانية اللي هو عايزها
+بس من غير ما نعمل ركوست تاني للسرفر ونحمل صفحة تانية 
 
 <li>
   <Link to='/products'>Products</Link>
 </li>
 
-7- ممكن بدل ما تستخدم اللينك العادي دا تستخد ناف لينك كمبوننت ومن هنا هو بيقدر يتارجت هل اللينك دا اكتف واحنا ف الصفحة بتاعته دلوقتي ولا لا وبقدر اضيف فيه الكلاس اللي انا عايزه يبقا اكتف لما يكون اللينك اكتف ف صفحته
+7- ممكن بدل ما تستخدم اللينك العادي دا تستخد ناف لينك كمبوننت 
+ومن هنا هو بيقدر يتارجت هل اللينك دا اكتف واحنا ف الصفحة بتاعته دلوقتي ولا لا
+ وبقدر اضيف فيه الكلاس اللي انا عايزه يبقا اكتف لما يكون اللينك اكتف ف صفحته
 والخاصية المسئولة عن الكلاس دا اسمها اكتف كلاس
 كل الناف لنكس اللي عندي بضيف ليهم الاكتف كلاس بروبرتي
 
@@ -652,18 +830,42 @@ ReactDOM.render(
 
 ===
 
-لو احنا ف صفحة معينة وعايزين نروح ل لينك جواها منتج مثلا جوا الصفحة الرئيسية او حاجات زي دي ف احنا بنحط الكمبوننتس كلها جوا كومبوننت اسمها <Switch>
+لو احنا ف صفحة معينة وعايزين نروح ل لينك جواها منتج مثلا 
+جوا الصفحة الرئيسية او حاجات زي دي ف احنا بنحط الكمبوننتس كلها جوا
+كومبوننت اسمها <Switch>
 
-import {Switch} from 'react-router-dom';
+import {Switch} from 'react-router-dom'; in app.js
 
+<Switch>
+  <Route path='/' exact>
+    <Redirect to='/quotes' />
+  </Route>
+  <Route path='/quotes' exact>
+    <AllQuotes />
+  </Route>
+  <Route path='/quotes/:quoteId'>
+    <QuoteDetail />
+  </Route>
+  <Route path='/new-quote'>
+    <NewQuote />
+  </Route>
+  <Route path='*'>
+    <NotFound />
+  </Route>
+</Switch>
+
+simply it is a wrapper for out routes
 ===
 
-هيكون في مشكلة هتواجهنا هو ان لو في باث نستد جوا باث تاني ف هو هنا هيختار تلقائي الباث الاول الصغير وعشان نصلح الموضوع دا بنحط اتربيوت جوا العنصر الاقل اسمها exact
+هيكون في مشكلة هتواجهنا هو ان لو في باث نستد جوا باث تاني 
+ف هو هنا هيختار تلقائي الباث الاول الصغير 
+وعشان نصلح الموضوع دا بنحط اتربيوت جوا العنصر الاقل اسمها exact
 
 او اننا نغير الترتيب بتاعم ونخلي اللي ب بارامز فوق والاساسية تحت
 ===
 
-لو احنا ف الباث الرئيسي من غير اي حاجة بعده وانا عايزه يعرض صفحة الولكم مثلا بدل ما ميعرضش حاجة وقتها هنستخدم كومبوننت تانية اسمها {Redirect}
+لو احنا ف الباث الرئيسي من غير اي حاجة بعده وانا عايزه يعرض صفحة الولكم
+ مثلا بدل ما ميعرضش حاجة وقتها هنستخدم كومبوننت تانية اسمها {Redirect}
 
 1- import {Redirect} from 'react-router-dom';
 
@@ -674,14 +876,16 @@ import {Switch} from 'react-router-dom';
 دا بيكون شكل الكمبوننت وبتاخد بروبرتي تو دي بتوديك ع الرابط اللي انت عايزه لكن لازم بتحط جوا راوت 
 ===
 
-عشان نقدر نعمل باث متغير او قيمته عشوائية او جاية حسب الصفحة اللي انا لسا معرفهاش ف احنا جوا الراوت هنستخدم الرابط المتغير
+عشان نقدر نعمل باث متغير او قيمته عشوائية او جاية
+ حسب الصفحة اللي انا لسا معرفهاش ف احنا جوا الراوت هنستخدم الرابط المتغير
 
 <Route path='/products/:productId'>
  // اللي هنا بعد ال : هو المفروض انه كدا متغير طلاما انا حطيته بعد ال:  ك
   <ProductDetail />
 </Route>
 
-وعشان اقدر اني اجيب قيمته او استخدمها جوا الجافا سكربت بروح للكومبوننت اللي انا عرفت ف الراوت بتاعها الباث دا وهي هنا البرو ديتيلز
+وعشان اقدر اني اجيب قيمته او استخدمها جوا الجافا سكربت
+بروح للكومبوننت اللي انا عرفت ف الراوت بتاعها الباث دا وهي هنا البرو ديتيلز
 
 هنستخدم هووك اسمها useParams()
 
@@ -690,12 +894,14 @@ import {Switch} from 'react-router-dom';
 2- const params = useParams();
 
 3- console.log(params.productId);
+
 الحاجة اللي بعد الكولن بقدر اجيبها من اسمها اللي انا ممرره بعد الكولن هناك ك مفتاح هنا للبارامز
 
 ===
 حاجة مهمة 
 
-عشان تعمل بيدج ايرور او نوت فاوند اما تيجي تعرضها المفروض بنعرضها لو مفيش لينك بالاسم اللي جاله بالتالى عايزين نعملها انها تظهر ف لينك مش ف اللينكات اللي عندنا 
+عشان تعمل بيدج ايرور او نوت فاوند اما تيجي تعرضها
+المفروض بنعرضها لو مفيش لينك بالاسم اللي جاله بالتالى عايزين نعملها انها تظهر ف لينك مش ف اللينكات اللي عندنا 
 
 1- هنروح ف اخر الراوتس كلهم ونضيف راوت كمان والراوت دي هنديها باث *
 <Route path='*'>
@@ -707,7 +913,9 @@ useHistory() hook
 
 لو احنا عملنا حاجة ف صفحة وعايزين المستخدم يتم تحويله لصفحة تانية بنستخدم اليوز هستوري هووك
 
-في اختيارين انك تستخدم PUSH =>  بتخلي المستخدم يقدر يرجع تاني للصفحة اللي كان فيها بزرار الباك , REPLACE => المستخدم هنا ميقدرش يرجع للصفحة اللي كان فيها بزرار الباك methods 
+في اختيارين انك تستخدم 
+PUSH =>  بتخلي المستخدم يقدر يرجع تاني للصفحة اللي كان فيها بزرار الباك 
+REPLACE => المستخدم هنا ميقدرش يرجع للصفحة اللي كان فيها بزرار الباك methods 
 
 1- import { useHistory } from 'react-router-dom';
 
@@ -722,7 +930,9 @@ useHistory() hook
 حاجة مهمة 
 -------
 
-لو احنا ف صفحة والمستخدم ممكن يروح ف صفحة تانية ويخسر الداتا اللي كان مسجلها او كاتبها واحنا عايزيزن ننبهه انه ممكن يخسرها ونوقفه ونخيره بين انه يكمل او يفضل بنستخدم كومبوننت تانية من رياكت راوتر اسمها برومبت
+لو احنا ف صفحة والمستخدم ممكن يروح ف صفحة تانية ويخسر الداتا اللي كان مسجلها او كاتبها 
+واحنا عايزيزن ننبهه انه ممكن يخسرها ونوقفه ونخيره بين انه يكمل او يفضل 
+بنستخدم كومبوننت تانية من رياكت راوتر اسمها برومبت
 
 1- import { Prompt } from 'react-router-dom';
 
@@ -733,8 +943,12 @@ useHistory() hook
         }
     />
 
-  1- القيمة الاولي اللي بياخدها هي when ودي بتقول للكومبوننت لما القيمة اللي جوا تكون ترو اظهري البرومبت دي والقيمة بتاعتها بتكون بولين
-  2- القيمة التانية هي الرسالة اللي عايزينها تظهر  وبتاخد قيمة ليها دالة والدخل بتاع الدالة دي الرابط بتاع اللوكيشن اللي احنا عايزين نوديه عليه والريترن بتاعها هو الرسالة اللي هتظهر
+  1- القيمة الاولي اللي بياخدها هي when
+  ودي بتقول للكومبوننت لما القيمة اللي جوا تكون ترو 
+  اظهري البرومبت دي والقيمة بتاعتها بتكون بولين
+
+  2- القيمة التانية هي الرسالة اللي عايزينها تظهر  وبتاخد قيمة ليها
+   دالة والدخل بتاع الدالة دي الرابط بتاع اللوكيشن اللي احنا عايزين نوديه عليه والريترن بتاعها هو الرسالة اللي هتظهر
   
 ===
 useLocation() hook from react-router
@@ -752,7 +966,8 @@ useLocation() hook from react-router
 }
 وفي غيرهم بروبس كتير
 
-بنستخدم معاها كلاس كريتور اسمه URLSearchParams() دي بمرر ليها السيرش بروبرتي اللي ف اللوكيشن بترجع لينا البارامز اللي ف الكويري متفصين كل واحدة ب key, value
+بنستخدم معاها كلاس كريتور اسمه URLSearchParams()
+ دي بمرر ليها السيرش بروبرتي اللي ف اللوكيشن بترجع لينا البارامز اللي ف الكويري متفصين كل واحدة ب key, value
 
 const params = new URLSearchParams(location.search)
 ===
@@ -767,7 +982,8 @@ nested Routes
 React Router V6
 =-=-=-=-=-=-=
 1- Switch is no longer there. instead we use <Routes> component to wrap all the routes.
-2- طريقة كتابة الكومبوننت اللي هتتعرض ف راوت معينة اتغيرت بدل ما كنا بنكتبها ك كمبوننت جواها بقينا بنكتبها جوا بروبرتي اسمها element
+2- طريقة كتابة الكومبوننت اللي هتتعرض ف راوت معينة اتغيرت
+ بدل ما كنا بنكتبها ك كمبوننت جواها بقينا بنكتبها جوا بروبرتي اسمها element
 
   <Routes>
     <Route path='/welcome' element={<Welcome />} />
@@ -786,7 +1002,7 @@ className={navData => navData.isActive ? 'active' : ''}
   <Route path='/' exact element={<Navigate to='/welcome' />}/>
 
 6- nested routes
-  -1- لازم راوت الصفحة اللي هيكون فيها نستد راوتس يكون ففيها * بعد الباث الاساسي
+  -1- لازم راوت الصفحة اللي هيكون فيها نستد راوتس يكون فيها * بعد الباث الاساسي
   <Route path='/welcome/*' element={<Welcome />} />
 
   -2- لازم ان النستد راوت تكون جوا راوتس كومبوننت
@@ -811,7 +1027,10 @@ navigate(1 or -1 or 2 ...etc) this is for prev or next page
 {{{ DEPLOY REACT App }}}
 
 حاجة مهمة جدا لازم تحطها ف الاعتبار
- هو اننا ف ملف الآب بنحمل كل ملفات الامبورتس اللي احنا مستخدمينها ف الكمبوننت ودا ف التطبيقات الكبيرة زي الاسواق وماشابه اكيد مش هبقا عايز احمل كل محتويات التطبيق الكبيرة جدا ودا هيأثر بالسلب علي المستخدم 
+
+ هو اننا ف ملف الآب بنحمل كل ملفات الامبورتس اللي احنا مستخدمينها
+  ف الكمبوننت ودا ف التطبيقات الكبيرة زي الاسواق وماشاب
+  ه اكيد مش هبقا عايز احمل كل محتويات التطبيق الكبيرة جدا ودا هيأثر بالسلب علي المستخدم 
  
 - Lazy loading 
 هنستخدم الطريقة دي من رياكت ودا بيخليني محملش محتويات صفحة ما الا اما اكون عايزها 
@@ -839,6 +1058,7 @@ navigate(1 or -1 or 2 ...etc) this is for prev or next page
 عشان نحضر الكود بتاعنا عشان يترفع ع النت مش هنرفعه زي ماحنا كاتبينه المفروض هنضغطه الاول ونرفعه 
 عشان كدا هنستخدم امر (npm run build)
 هيعمل فولدر جديد فيه كل الكود المكتوب بتاعنا مضغوط ف فولدر اسمه build ودا اللي المفروض انه هيترفع ع السرفر
+انت بعد كدا بترفعه علي نتلفاي وبتعمله لينك علي جتهب ع الكود الاساسي قبل ما يتعمله build
 
 ==================
 
